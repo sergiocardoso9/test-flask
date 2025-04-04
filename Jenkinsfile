@@ -23,8 +23,7 @@ pipeline{
       }
     }
   }
-}
-post{
+  post{
   success{
     bat 'echo "build successful"'
   }
@@ -32,3 +31,5 @@ post{
     bat 'echo "build failed"'
   }
 }
+}
+
