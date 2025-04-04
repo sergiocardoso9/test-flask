@@ -3,7 +3,7 @@ pipeline{
   stages{
     stage('Checkout Code'){
       steps{
-        git 'https://github.com/Parth2k3/test-flask'
+        git 'https://github.com/Parth2k3/test-flask.git'
       }
     }
     stage('Build'){
