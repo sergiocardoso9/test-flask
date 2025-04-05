@@ -1,35 +1,33 @@
-pipeline{
-  agent any
-  stages{
-    stage('Checkout Code'){
-      steps{
-        git branch: 'main', url: 'https://github.com/Parth2k3/test-flask.git'
+pipeline {
+    agent any
 
-      }
+    environment {
+        IMAGE_NAME = 'parth2k3/test-flask'
     }
-    stage('Build'){
-      steps{
-        bat 'echo "building the app"'
-      }
-    }
-    stage('Test'){
-      steps{
-        bat 'echo "Running tests"'
-      }
-    }
-    stage('Deploy'){
-      steps{
-        bat 'echo "deploying"'
-      }
-    }
-  }
-  post{
-  success{
-    bat 'echo "build successful"'
-  }
-  failure{
-    bat 'echo "build failed"'
-  }
-}
-}
 
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Parth2k3/test-flask'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat "docker build -t %IMAGE_NAME%:latest ."
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    bat """
+                    echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+                    docker push %IMAGE_NAME%:latest
+                    docker logout
+                    """
+                }
+            }
+        }
+    }
+}
