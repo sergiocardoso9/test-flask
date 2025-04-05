@@ -6,7 +6,7 @@ pipeline{
   stages{
     stage('Checkout'){
       steps{
-        git branch 'main', url: 'https://github.com/Parth2k3/test-flask'
+        git branch: 'main', url: 'https://github.com/Parth2k3/test-flask.git'
       }
     }
     stage('Build Docker image'){
