@@ -4,20 +4,14 @@ pipeline{
     AWS_REGION = 'ap-south-1'
     IMAGE_NAME = 'test-flask'
     REPO_NAME = 'test'
+    IMAGE_TAG = 'latest'
   }
   stages{
     stage('checkout'){
       steps{
         git branch:'main', url: 'https://github.com/Parth2k3/test-flask'
       }
-    }
-    stage('Tag the image'){
-      steps{
-        script{
-          IMAGE_TAG = 'latest'
-        }
-      }
-    }
+    }   
     stage('Login to ECR'){
           steps{
             withAWS(region: "${env.AWS_REGION}", credentials: 'aws-creds'){
