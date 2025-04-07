@@ -25,8 +25,8 @@ pipeline{
     stage('Build Docker Image'){
           steps{
             powershell '''
-            docker build -t ${env.IMAGE_NAME} .
-            docker tag ${env.IMAGE_NAME}:${env.IMAGE_TAG} 864981751441.dkr.ecr.ap-south-1.amazonaws.com/test:latest
+            docker build -t test:latest .
+            docker tag test:latest 864981751441.dkr.ecr.ap-south-1.amazonaws.com/test:latest
             '''
           }
     }
