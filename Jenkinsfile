@@ -29,7 +29,7 @@ pipeline{
             }
           }
     }
-    stage('Build Docker Image){
+    stage('Build Docker Image'){
           steps{
             powershell '''
             docker build -t $env.IMAGE_NAME:$env.IMAGE_TAG .
