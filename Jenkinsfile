@@ -15,15 +15,15 @@ pipeline {
 
         stage('Set up Python Virtual Env') {
             steps {
-                sh 'python -m venv $VENV'
-                sh './$VENV/bin/pip install --upgrade pip'
-                sh './$VENV/bin/pip install -r requirements.txt'
+                bat 'python -m venv $VENV'
+                bat './$VENV/bin/pip install --upgrade pip'
+                bat './$VENV/bin/pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh './$VENV/bin/python -m unittest discover -s tests'
+                bat './$VENV/bin/python -m unittest discover -s tests'
             }
         }
     }
