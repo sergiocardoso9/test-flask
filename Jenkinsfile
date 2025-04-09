@@ -23,16 +23,7 @@ pipeline {
         stage('Run Unit Tests') {
             steps {
                 bat '%VENV%\\Scripts\\python -m unittest discover -s tests'
-                // Optional: If using xmlrunner
-                // bat '%VENV%\\Scripts\\python -m xmlrunner discover -s tests -o test-reports'
             }
         }
     }
-        // Optional: only if generating XML test reports
-        post {
-             always {
-                 junit 'test-reports/**/*.xml'
-             }
-         }
-    
 }
