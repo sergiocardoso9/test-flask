@@ -29,10 +29,10 @@ pipeline {
         }
 
         // Optional: only if generating XML test reports
-        // post {
-        //     always {
-        //         junit 'test-reports/**/*.xml'
-        //     }
-        // }
+        post {
+             always {
+                 junit 'test-reports/**/*.xml'
+             }
+         }
     }
 }
