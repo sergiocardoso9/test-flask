@@ -27,12 +27,12 @@ pipeline {
                 // bat '%VENV%\\Scripts\\python -m xmlrunner discover -s tests -o test-reports'
             }
         }
-
+    }
         // Optional: only if generating XML test reports
         post {
              always {
                  junit 'test-reports/**/*.xml'
              }
          }
-    }
+    
 }
