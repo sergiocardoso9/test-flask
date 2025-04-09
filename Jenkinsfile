@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -9,28 +8,31 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/parth2k3/test-flask.git'
+                git branch: 'main', url: 'https://github.com/YOUR_USERNAME/YOUR_REPO.git'
             }
         }
 
         stage('Set up Python Virtual Env') {
             steps {
-                bat 'python -m venv $VENV'
-                bat './$VENV/bin/pip install --upgrade pip'
-                bat './$VENV/bin/pip install -r requirements.txt'
+                bat 'python -m venv %VENV%'
+                bat '%VENV%\\Scripts\\pip install --upgrade pip'
+                bat '%VENV%\\Scripts\\pip install -r requirements.txt'
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Unit Tests') {
             steps {
-                bat './$VENV/bin/python -m unittest discover -s tests'
+                bat '%VENV%\\Scripts\\python -m unittest discover -s tests'
+                // Optional: If using xmlrunner
+                // bat '%VENV%\\Scripts\\python -m xmlrunner discover -s tests -o test-reports'
             }
         }
-    }
 
-    post {
-        always {
-            junit 'tests/**/TEST-*.xml' // if you export test results
-        }
+        // Optional: only if generating XML test reports
+        // post {
+        //     always {
+        //         junit 'test-reports/**/*.xml'
+        //     }
+        // }
     }
 }
