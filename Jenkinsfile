@@ -1,24 +1,39 @@
 pipeline {
   agent any
-  options { timestamps() }
+
+  // Run this on a schedule. Examples:
+  // 'H/5 * * * *'  -> every ~5 minutes (hashed spread)
+  // 'H H * * *'    -> once daily at a hashed time
+  // 'H/15 * * * *' -> every ~15 minutes
+  triggers {
+    cron('* * * * *')
+  }
+
+  options {
+    timestamps()
+    ansiColor('xterm')
+  }
 
   stages {
     stage('Checkout') {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
-    stage('Set up venv') {
+    stage('Set up Python venv') {
       steps {
         sh '''
           set -e
-          python3 --version || true
-          # create venv
+          python3 --version
           python3 -m venv .venv
           . .venv/bin/activate
           python -m pip install --upgrade pip
+          # ensure pytest is present even if not in requirements.txt
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
+          pip install pytest
         '''
       }
     }
@@ -28,8 +43,10 @@ pipeline {
         sh '''
           set -e
           . .venv/bin/activate
-          # adjust to your test command
-          pytest -q || python -m pytest -q || true
+          # create folder for junit xml
+          mkdir -p test-results
+          # run tests; adjust pattern if your tests differ
+          pytest -q --junitxml=test-results/pytest.xml
         '''
       }
     }
@@ -37,9 +54,8 @@ pipeline {
 
   post {
     always {
-      archiveArtifacts artifacts: '**/*.log', allowEmptyArchive: true
-      junit '**/test-results/*.xml', allowEmptyResults: true
+      archiveArtifacts artifacts: 'test-results/*.xml', allowEmptyArchive: true
+      junit 'test-results/*.xml'
     }
   }
 }
-
