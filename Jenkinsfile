@@ -3,10 +3,6 @@ pipeline {
   triggers { cron('* * * * *') }
   options { timestamps() }
 
-  environment {
-    PYTEST_DISABLE_PLUGIN_AUTOLOAD = '1'
-  }
-
   stages {
     stage('Checkout') {
       steps { checkout scm }
@@ -30,6 +26,7 @@ pipeline {
         sh '''
           set -e
           . .venv/bin/activate
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
           mkdir -p test-results
           pytest -q --junitxml=test-results/pytest.xml
         '''
