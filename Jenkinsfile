@@ -3,6 +3,10 @@ pipeline {
   triggers { cron('* * * * *') }
   options { timestamps() }
 
+  environment {
+    PYTEST_DISABLE_PLUGIN_AUTOLOAD = '1'
+  }
+
   stages {
     stage('Checkout') {
       steps { checkout scm }
@@ -12,6 +16,7 @@ pipeline {
         sh '''
           set -e
           python3 -V
+          rm -rf .venv
           python3 -m venv .venv
           . .venv/bin/activate
           python -m pip install --upgrade pip
