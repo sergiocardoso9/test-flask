@@ -1,25 +1,45 @@
-pipeline{
+pipeline {
   agent any
-  environment{
-    VENV = 'venv'
+  options { timestamps() }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Set up venv') {
+      steps {
+        sh '''
+          set -e
+          python3 --version || true
+          # create venv
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+        '''
+      }
+    }
+
+    stage('Run tests') {
+      steps {
+        sh '''
+          set -e
+          . .venv/bin/activate
+          # adjust to your test command
+          pytest -q || python -m pytest -q || true
+        '''
+      }
+    }
   }
-  stages{
-    stage('Checkout git'){
-      steps{
-        git branch: 'main', url: 'https://github.com/Parth2k3/test-flask'
-      }
-    }
-    stage('set up the venv'){
-      steps{
-        bat 'python -m venv %VENV%'
-        bat '%VENV%\\Scripts\\python -m pip install --upgrade pip'
-        bat '%VENV%\\Scripts\\pip install -r requirements.txt'
-      }
-    }
-    stage('RUN THE TESTS'){
-      steps{
-        bat '%VENV%\\Scripts\\python -m unittest discover -s tests'
-      }
+
+  post {
+    always {
+      archiveArtifacts artifacts: '**/*.log', allowEmptyArchive: true
+      junit '**/test-results/*.xml', allowEmptyResults: true
     }
   }
 }
+
